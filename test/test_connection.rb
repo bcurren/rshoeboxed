@@ -54,4 +54,33 @@ class TestConnection < Test::Unit::TestCase
       @conn.send(:post_xml, xml)
     end
   end
+  
+  def test_get_receipt_call__success_getting_two_receipt
+    request = fixture_xml_content("receipt_request")
+    response = fixture_xml_content("receipt_response")
+    
+    conn = Connection.new("api_key", "user_token")
+    conn.expects(:post_xml).with(request).returns(response)
+    
+    receipts = conn.get_receipt_call
+    assert_equal 2, receipts.size
+    
+    receipt = receipts[0]
+    assert_equal "23984923842", receipt.id
+    assert_equal "Great Plains Trust Company", receipt.store
+    assert_equal Date.new(2008, 5, 12), receipt.date
+    assert_equal BigDecimal.new("3378.30"), receipt.total
+    assert_equal "http://www.shoeboxed.com/receipt1.jpeg", receipt.image_url
+    
+    receipt = receipts[1]
+    assert_equal "39239293", receipt.id
+    assert_equal "RadioShack", receipt.store
+    assert_equal Date.new(2008, 5, 12), receipt.date
+    assert_equal BigDecimal.new("3.51"), receipt.total
+    assert_equal "http://www.shoeboxed.com/receipt2.jpeg", receipt.image_url
+  end
+  
+  def test_build_receipt_call_request
+    assert_equal fixture_xml_content("receipt_request"), @conn.send(:build_receipt_request)
+  end
 end

@@ -5,17 +5,23 @@ require 'rexml/document'
 module RShoeboxed
   class Receipt
     attr_accessor :id, :store, :date, :total, :image_url
-
-    def initialize(xml = nil)
-      if xml
-        attributes = REXML::Document.new(xml).root.attributes
-        # @doc.elements.each("//Receipt") {|receipt| puts receipt.attributes.inspect}
-        self.id = attributes["id"]
-        self.store = attributes["store"]
-        self.date = attributes["date"]
-        self.total = attributes["total"]
-        self.image_url = attributes["imgurl"]
+    
+    def self.parse(xml)
+      document = REXML::Document.new(xml)
+      document.elements.collect("//Receipt") do |receipt_element|
+        receipt = Receipt.new
+        
+        receipt.id = receipt_element.attributes["id"]
+        receipt.store = receipt_element.attributes["store"]
+        receipt.date = receipt_element.attributes["date"]
+        receipt.total = receipt_element.attributes["total"]
+        receipt.image_url = receipt_element.attributes["imgurl"]
+        
+        receipt
       end
+    end
+    
+    def initialize
     end
     
     def total=(total)

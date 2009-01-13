@@ -8,8 +8,10 @@ class TestReceipt < Test::Unit::TestCase
   
   def test_initialize_parse_xml
     response = fixture_xml_content("receipt_info_response")
-    receipt = Receipt.new(response)
+    receipts = Receipt.parse(response)
+    assert_equal 1, receipts.size
     
+    receipt = receipts.first
     assert_equal "1", receipt.id
     assert_equal "Morgan Imports", receipt.store
     assert_equal Date.new(2008, 5, 12), receipt.date

@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Request xmlns="urn:sbx:apis:SbxBaseComponents">
+  <RequesterCredentials>
+    <ApiUserToken>api_key</ApiUserToken>
+    <SbxUserToken>user_token</SbxUserToken>
+  </RequesterCredentials>
+  <GetReceiptCall>
+    <ReceiptFilter>
+    </ReceiptFilter>
+  </GetReceiptCall>
+</Request>
