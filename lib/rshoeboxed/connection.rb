@@ -79,16 +79,16 @@ module RShoeboxed
       connection.use_ssl = true
       connection.verify_mode = OpenSSL::SSL::VERIFY_NONE
 
-      request = Net::HTTP::Get.new(API_PATH)
+      request = Net::HTTP::Post.new(API_PATH)
       request.body = body
       request.content_type = 'application/xml'
 
       result = connection.start  { |http| http.request(request) }
 
-      puts "result"
-      puts result
-      puts result.inspect
-      puts result["location"]
+      # puts "result"
+      # puts result
+      # puts result.inspect
+      # puts result["location"]
 
       result.body
     end
