@@ -6,6 +6,11 @@
   </RequesterCredentials>
   <GetReceiptCall>
     <ReceiptFilter>
+	<Results>50</Results>
+	<PageNo>1</PageNo>
+	<DateStart>1900-01-01T00:00:10</DateStart>
+	<DateEnd>2100-12-12T00:00:10</DateEnd>
     </ReceiptFilter>
   </GetReceiptCall>
 </Request>
+

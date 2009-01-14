@@ -45,17 +45,22 @@ module RShoeboxed
       receipts = Receipt.parse(response)
       receipts ? receipts.first : nil
     end
-    
-    def get_receipt_call
+
+    # note that result_count can only be 50, 100, or 200
+
+    def get_receipt_call(result_count=50, page_no = 1)
       receipt = Receipt.new
 
-      request = build_receipt_request
+      request = build_receipt_request(result_count, page_no)
       response = post_xml(request)
+
+      puts response.inspect
+
 
       Receipt.parse(response)
     end
 
-  private
+    private
 
     def self.encode_params(params)
       # If hash, turn to array and give it alpha ordering
@@ -78,22 +83,45 @@ module RShoeboxed
       connection = Net::HTTP.new(API_SERVER, 443)
       connection.use_ssl = true
       connection.verify_mode = OpenSSL::SSL::VERIFY_NONE
+      #      request = Net::HTTP.post_form(URI.parse(API_URL),
+      #                                   {'xml'=>CGI.escape(body)})
 
       request = Net::HTTP::Post.new(API_PATH)
-      request.body = body
-      request.content_type = 'application/xml'
+      request.set_form_data({'xml'=>body}, ';')
+
+      # request.body = body
+      # request.content_type = 'application/xml'
 
       result = connection.start  { |http| http.request(request) }
 
-      # puts "result"
-      # puts result
-      # puts result.inspect
-      # puts result["location"]
+      case result
+      when Net::HTTPSuccess, Net::HTTPRedirection
+        puts "result"
+        # puts result
+        puts result.response
+        # puts result["location"]
+
+        # OK
+      else
+        response.error!
+        #
+        # Failure
+        #
+        error_msg = result.body
+        raise InternalError.new(error_msg) if error_msg =~ /not formatted correctly/
+        raise AuthenticationError.new(error_msg) if error_msg =~ /[Aa]uthentication failed/
+        raise UnknownSystemError.new(error_msg) if error_msg =~ /does not exist/
+        raise InvalidParameterError.new(error_msg) if error_msg =~ /Invalid parameter: (.*)/
+        raise ApiAccessNotEnabledError.new(error_msg) if error_msg =~ /API access for this account is not enabled/
+
+        # Raise an exception for unexpected errors
+        raise error_msg
+      end
 
       result.body
     end
 
-    def build_receipt_request
+    def build_receipt_request(result_count, page_no)
       xml = Builder::XmlMarkup.new
       xml.instruct!
       xml.Request(:xmlns => "urn:sbx:apis:SbxBaseComponents") do |xml|
@@ -103,6 +131,10 @@ module RShoeboxed
         end
         xml.GetReceiptCall do |xml|
           xml.ReceiptFilter do |xml|
+            xml.Results(result_count)
+            xml.PageNo(page_no)
+            xml.DateStart('1900-01-01T00:00:10')
+            xml.DateEnd('2100-12-12T00:00:10')
           end
         end
       end
