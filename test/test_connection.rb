@@ -84,8 +84,34 @@ class TestConnection < Test::Unit::TestCase
     assert_equal fixture_xml_content("receipt_request"), @conn.send(:build_receipt_request, 50, 1, '1900-01-01T00:00:10', '2100-12-12T00:00:10')
   end
   
-  # set the error messages to be raised
-  def test_check_for_api_error
-    assert true
+  def test_check_for_api_error__all_error_codes
+    assert_api_error_raised("receipt_response_bad_credentials", AuthenticationError, "Bad credentials")
+    assert_api_error_raised("receipt_response_unknown_api_call", UnknownAPICallError, "Unknown API Call")
+    assert_api_error_raised("receipt_response_restricted_ip", RestrictedIPError, "Restricted IP")
+    assert_api_error_raised("receipt_response_xml_validation", XMLValidationError, "XML Validation")
+    assert_api_error_raised("receipt_response_unknown_api_call", UnknownAPICallError, "Unknown API Call")
+  end
+  
+  def test_check_for_api_error__no_error
+    assert_nothing_raised do
+      assert_equal "", @conn.send(:check_for_api_error, "")
+    end
+    
+    response = fixture_xml_content("receipt_info_response")
+    assert_nothing_raised do
+      assert_equal response, @conn.send(:check_for_api_error, response)
+    end
+  end
+  
+private
+
+  def assert_api_error_raised(response_fixture, error_type, error_message)
+    response = fixture_xml_content(response_fixture)
+    begin
+      @conn.send(:check_for_api_error, response)
+      fail "#{error_type.to_s} was not thrown"
+    rescue error_type => e
+      assert_equal error_message, e.message
+    end
   end
 end

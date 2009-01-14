@@ -4,19 +4,19 @@ require "cgi"
 require "net/https"
 
 module RShoeboxed
+  class Error < StandardError; end;
+  class UnknownAPICallError < Error; end;
+  class InternalError < Error; end;
+  class AuthenticationError < Error; end;
+  class RestrictedIPError < Error; end;
+  class XMLValidationError < Error; end;
+  
   class Connection
     attr_accessor :api_key, :user_token
 
     API_SERVER = "www.shoeboxed.com"
     API_PATH = "/ws/api.htm"
     API_URL = "https://" + API_SERVER + API_PATH
-    
-    
-    class Error < StandardError; end;
-    class InternalError < Error; end;
-    class AuthenticationError < Error; end;
-    class RestrictedIP < Error; end;
-    class XMLValidationError < Error; end;
 
 
     # Generates a url for you to obtain the user token. This url with take the user to the Shoeboxed authentication
@@ -87,30 +87,32 @@ module RShoeboxed
       request.set_form_data({'xml'=>body})
       
       result = connection.start  { |http| http.request(request) }
-
-      case result
-      when Net::HTTPSuccess
-        if result.body =~ /Error code/
-          error_msg = result.body
-          
-          raise InternalError.new(error_msg) if error_msg =~ /Unknown API Call/
-          raise AuthenticationError.new(error_msg) if error_msg =~ /Bad credentials/
-          raise RestrictedIPError.new(error_msg) if error_msg =~ /Restricted IP/
-          raise XMLValidationError.new(error_msg) if error_msg =~ /XML Validation/
-          raise InternalError.new(error_msg) if error_msg =~ /API access for this account is not enabled/
-
-          # Raise an exception for unexpected errors
-          raise error_msg
-        end
-      else
-        raise "create exception here"
-      end
-
-      result.body
+      
+      check_for_api_error(result.body)
     end
     
     def check_for_api_error(body)
+      document = REXML::Document.new(body)
+      root = document.root
       
+      if root && root.name == "Error"
+        description = root.attributes["description"]
+        
+        case root.attributes["code"]
+        when "1"
+          raise AuthenticationError.new(description)
+        when "2"
+          raise UnknownAPICallError.new(description)
+        when "3"
+          raise RestrictedIPError.new(description)
+        when "4"
+          raise XMLValidationError.new(description)
+        when "5"
+          raise InternalError.new(description)
+        end
+      end
+      
+      body
     end
 
     def build_receipt_request(result_count, page_no, date_start, date_end)
