@@ -10,6 +10,13 @@ module RShoeboxed
     API_SERVER = "www.shoeboxed.com"
     API_PATH = "/ws/api.htm"
     API_URL = "https://" + API_SERVER + API_PATH
+    
+    
+    class Error < StandardError; end;
+    class InternalError < Error; end;
+    class AuthenticationError < Error; end;
+    class RestrictedIP < Error; end;
+    class XMLValidationError < Error; end;
 
 
     # Generates a url for you to obtain the user token. This url with take the user to the Shoeboxed authentication
@@ -48,10 +55,10 @@ module RShoeboxed
 
     # note that result_count can only be 50, 100, or 200
 
-    def get_receipt_call(result_count=50, page_no = 1)
+    def get_receipt_call(date_start, date_end, result_count=50, page_no = 1)
       receipt = Receipt.new
 
-      request = build_receipt_request(result_count, page_no)
+      request = build_receipt_request(result_count, page_no, date_start, date_end)
       response = post_xml(request)
 
       puts response.inspect
@@ -75,53 +82,51 @@ module RShoeboxed
     end
 
     def post_xml(body)
-      # puts "response"
-      # puts API_SERVER
-      # puts API_PATH
-      # puts body
 
       connection = Net::HTTP.new(API_SERVER, 443)
       connection.use_ssl = true
       connection.verify_mode = OpenSSL::SSL::VERIFY_NONE
-      #      request = Net::HTTP.post_form(URI.parse(API_URL),
-      #                                   {'xml'=>CGI.escape(body)})
 
       request = Net::HTTP::Post.new(API_PATH)
-      request.set_form_data({'xml'=>body}, ';')
+      request.set_form_data({'xml'=>body})
 
-      # request.body = body
-      # request.content_type = 'application/xml'
 
       result = connection.start  { |http| http.request(request) }
 
       case result
-      when Net::HTTPSuccess, Net::HTTPRedirection
-        puts "result"
-        # puts result
-        puts result.response
-        # puts result["location"]
+      when Net::HTTPSuccess
+        # puts "result"
+        # puts result.response
 
-        # OK
+        # unfortnately, error messages show up as successful responses,
+        # so we need to prase them
+        
+        if result.body =~ /Error code/
+          error_msg = result.body
+          raise InternalError.new(error_msg) if error_msg =~ /Unknown API Call/
+          raise AuthenticationError.new(error_msg) if error_msg =~ /Bad credentials/
+          raise RestrictedIPError.new(error_msg) if error_msg =~ /Restricted IP/
+          raise XMLValidationError.new(error_msg) if error_msg =~ /XML Validation/
+          raise InternalError.new(error_msg) if error_msg =~ /API access for this account is not enabled/
+
+          # Raise an exception for unexpected errors
+          raise error_msg
+
+        end
+      when Net::HTTPRedirection
+        # if we are redirected we have an error in the authentication process
+        raise AuthenticationError.new('errors during the User Authentication Process (UAP)')
       else
         response.error!
         #
         # Failure
         #
-        error_msg = result.body
-        raise InternalError.new(error_msg) if error_msg =~ /not formatted correctly/
-        raise AuthenticationError.new(error_msg) if error_msg =~ /[Aa]uthentication failed/
-        raise UnknownSystemError.new(error_msg) if error_msg =~ /does not exist/
-        raise InvalidParameterError.new(error_msg) if error_msg =~ /Invalid parameter: (.*)/
-        raise ApiAccessNotEnabledError.new(error_msg) if error_msg =~ /API access for this account is not enabled/
-
-        # Raise an exception for unexpected errors
-        raise error_msg
       end
 
       result.body
     end
 
-    def build_receipt_request(result_count, page_no)
+    def build_receipt_request(result_count, page_no, date_start, date_end)
       xml = Builder::XmlMarkup.new
       xml.instruct!
       xml.Request(:xmlns => "urn:sbx:apis:SbxBaseComponents") do |xml|
@@ -133,8 +138,8 @@ module RShoeboxed
           xml.ReceiptFilter do |xml|
             xml.Results(result_count)
             xml.PageNo(page_no)
-            xml.DateStart('1900-01-01T00:00:10')
-            xml.DateEnd('2100-12-12T00:00:10')
+            xml.DateStart(date_start)
+            xml.DateEnd(date_end)
           end
         end
       end

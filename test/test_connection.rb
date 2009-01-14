@@ -62,8 +62,8 @@ class TestConnection < Test::Unit::TestCase
     conn = Connection.new("api_key", "user_token")
     conn.expects(:post_xml).with(request).returns(response)
     
-    receipts = conn.get_receipt_call\
-    # assert_equal 2, receipts.size
+    receipts = conn.get_receipt_call
+    assert_equal 2, receipts.size
     
     receipt = receipts[0]
     assert_equal "23984923842", receipt.id
@@ -81,7 +81,7 @@ class TestConnection < Test::Unit::TestCase
   end
   
   def test_build_receipt_call_request
-    assert_equal fixture_xml_content("receipt_request"), @conn.send(:build_receipt_request, 50, 1)
+    assert_equal fixture_xml_content("receipt_request"), @conn.send(:build_receipt_request, 50, 1, '1900-01-01T00:00:10', '2100-12-12T00:00:10')
   end
   
   # set the error messages to be raised
