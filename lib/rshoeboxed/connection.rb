@@ -2,6 +2,8 @@ gem "builder"
 require "builder"
 require "cgi"
 require "net/https"
+require 'rexml/document'
+require 'logger'
 
 module RShoeboxed
   class Error < StandardError; end;
@@ -18,6 +20,15 @@ module RShoeboxed
     API_PATH = "/ws/api.htm"
     API_URL = "https://" + API_SERVER + API_PATH
 
+    @@logger = Logger.new(STDOUT)
+    def logger
+      @@logger
+    end
+
+    def self.log_level=(level)
+      @@logger.level = level
+    end
+    self.log_level = Logger::WARN
 
     # Generates a url for you to obtain the user token. This url with take the user to the Shoeboxed authentication
     # page. After the user successfully authenticates, they will be redirected to the app_url with the token and uname
@@ -44,7 +55,6 @@ module RShoeboxed
       @user_token = user_token
     end
 
-
     def get_receipt_info_call(id)
       request = build_receipt_info_request(id)
       response = post_xml(request)
@@ -53,8 +63,7 @@ module RShoeboxed
       receipts ? receipts.first : nil
     end
 
-    # note that result_count can only be 50, 100, or 200
-
+    # Note: the result_count can only be 50, 100, or 200
     def get_receipt_call(date_start, date_end, result_count = 50, page_no = 1)
       receipt = Receipt.new
 
@@ -87,6 +96,13 @@ module RShoeboxed
       request.set_form_data({'xml'=>body})
       
       result = connection.start  { |http| http.request(request) }
+      
+      if logger.debug?
+        logger.debug "Request:"
+        logger.debug body
+        logger.debug "Response:"
+        logger.debug result.body
+      end
       
       check_for_api_error(result.body)
     end
