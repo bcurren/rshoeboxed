@@ -4,7 +4,8 @@ require 'rexml/document'
 
 module RShoeboxed
   class Receipt
-    attr_accessor :id, :store, :date, :total, :image_url
+    attr_accessor :id, :store, :image_url
+    attr_reader :date, :total
     
     def self.parse(xml)
       document = REXML::Document.new(xml)
