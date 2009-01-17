@@ -62,7 +62,7 @@ class TestConnection < Test::Unit::TestCase
     conn = Connection.new("api_key", "user_token")
     conn.expects(:post_xml).with(request).returns(response)
     
-    receipts = conn.get_receipt_call('1900-01-01T00:00:10', '2100-12-12T00:00:10')
+    receipts = conn.get_receipt_call(Date.new(2008, 1, 1), Date.new(2009, 1, 1))
     assert_equal 2, receipts.size
     
     receipt = receipts[0]
@@ -80,8 +80,8 @@ class TestConnection < Test::Unit::TestCase
     assert_equal "http://www.shoeboxed.com/receipt2.jpeg", receipt.image_url
   end
   
-  def test_build_receipt_call_request
-    assert_equal fixture_xml_content("receipt_request"), @conn.send(:build_receipt_request, 50, 1, '1900-01-01T00:00:10', '2100-12-12T00:00:10')
+  def test_build_receipt_request
+    assert_equal fixture_xml_content("receipt_request"), @conn.send(:build_receipt_request, 50, 1, Date.new(2008, 1, 1), Date.new(2009, 1, 1))
   end
   
   def test_check_for_api_error__all_error_codes
@@ -101,6 +101,13 @@ class TestConnection < Test::Unit::TestCase
     assert_nothing_raised do
       assert_equal response, @conn.send(:check_for_api_error, response)
     end
+  end
+  
+  def test_date_to_s
+    assert_equal "2009-01-15T00:00:00", @conn.send(:date_to_s, Date.new(2009, 1, 15))
+    assert_equal "2010-02-13T05:10:23", @conn.send(:date_to_s, DateTime.new(2010, 2, 13, 5, 10, 23))
+    assert_equal "2008-03-14T12:13:14", @conn.send(:date_to_s, Time.utc(2008, 3, 14, 12, 13, 14))
+    assert_equal "2008-03-14T12:13:14", @conn.send(:date_to_s, "2008-03-14T12:13:14")
   end
   
 private

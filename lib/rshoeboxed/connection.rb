@@ -73,8 +73,16 @@ module RShoeboxed
       Receipt.parse(response)
     end
 
-    private
-
+  private
+    
+    def date_to_s(date)
+      my_date = date
+      if !date.kind_of?(String)
+        my_date = date.strftime("%Y-%m-%dT%H:%M:%S")
+      end
+      my_date
+    end
+    
     def self.encode_params(params)
       # If hash, turn to array and give it alpha ordering
       if params.kind_of? Hash
@@ -143,8 +151,8 @@ module RShoeboxed
           xml.ReceiptFilter do |xml|
             xml.Results(result_count)
             xml.PageNo(page_no)
-            xml.DateStart(date_start)
-            xml.DateEnd(date_end)
+            xml.DateStart(date_to_s(date_start))
+            xml.DateEnd(date_to_s(date_end))
           end
         end
       end
