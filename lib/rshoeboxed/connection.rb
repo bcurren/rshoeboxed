@@ -64,16 +64,24 @@ module RShoeboxed
     end
 
     # Note: the result_count can only be 50, 100, or 200
-    def get_receipt_call(date_start, date_end, result_count = 50, page_no = 1)
+    def get_receipt_call(start_date, end_date, per_page = 50, current_page = 1)
       receipt = Receipt.new
 
-      request = build_receipt_request(result_count, page_no, date_start, date_end)
+      request = build_receipt_request(per_page, current_page, start_date, end_date)
       response = post_xml(request)
 
-      Receipt.parse(response)
+      receipts = Receipt.parse(response)
+      wrap_array_with_pagination(receipts, response, current_page, per_page)
     end
 
   private
+  
+    def wrap_array_with_pagination(receipts, response, current_page, per_page)
+      document = REXML::Document.new(response)
+      counts = document.elements.collect("//Receipts") { |element| element.attributes["count"] || 0 }
+      
+      ListProxy.new(receipts, counts.first, current_page, per_page)
+    end
     
     def date_to_s(date)
       my_date = date
@@ -173,6 +181,5 @@ module RShoeboxed
         end
       end
     end
-
   end
 end

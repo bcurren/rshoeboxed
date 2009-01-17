@@ -4,6 +4,7 @@ $:.unshift(File.dirname(__FILE__)) unless
 require 'rubygems'
 require 'rshoeboxed/receipt'
 require 'rshoeboxed/connection'
+require 'rshoeboxed/list_proxy'
 
 module RShoeboxed
   VERSION = '0.0.1'

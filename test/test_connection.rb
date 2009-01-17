@@ -63,6 +63,10 @@ class TestConnection < Test::Unit::TestCase
     conn.expects(:post_xml).with(request).returns(response)
     
     receipts = conn.get_receipt_call(Date.new(2008, 1, 1), Date.new(2009, 1, 1))
+    assert_equal 2, receipts.total
+    assert_equal 1, receipts.current_page
+    assert_equal 50, receipts.per_page
+    assert_equal 1, receipts.pages
     assert_equal 2, receipts.size
     
     receipt = receipts[0]
