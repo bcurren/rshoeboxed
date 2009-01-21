@@ -78,7 +78,24 @@ class TestConnection < Test::Unit::TestCase
   end
   
   def test_build_receipt_request
-    assert_equal fixture_xml_content("receipt_request"), @conn.send(:build_receipt_request, 50, 1, Date.new(2008, 1, 1), Date.new(2009, 1, 1))
+    options = {
+      :per_page => 50,
+      :current_page => 1,
+      :use_sell_date => false
+    }
+    assert_equal fixture_xml_content("receipt_request"), 
+      @conn.send(:build_receipt_request, Date.new(2008, 1, 1), Date.new(2009, 1, 1), options)
+  end
+  
+  def test_build_receipt_request__category_filter
+    options = {
+      :per_page => 50,
+      :current_page => 1,
+      :use_sell_date => true,
+      :category_id => 10
+    }
+    assert_equal fixture_xml_content("receipt_with_category_id_request"), 
+      @conn.send(:build_receipt_request, Date.new(2008, 1, 1), Date.new(2009, 1, 1), options)
   end
   
   def test_check_for_api_error__all_error_codes
@@ -113,20 +130,20 @@ class TestConnection < Test::Unit::TestCase
   
   
   def test_get_category_call
-      request = fixture_xml_content("category_request")
-      response = fixture_xml_content("category_response")
-  
-      conn = Connection.new("api_key", "user_token")
-      conn.expects(:post_xml).with(request).returns(response)
-  
-      categories = conn.get_category_call
-      assert_equal 3, categories.size
-  
-      categories.each_with_index do |category, i|
-        category_id = (i + 1).to_s
-        assert_equal category_id, category.id
-        assert_equal "Category #{category_id}", category.name
-      end
+    request = fixture_xml_content("category_request")
+    response = fixture_xml_content("category_response")
+
+    conn = Connection.new("api_key", "user_token")
+    conn.expects(:post_xml).with(request).returns(response)
+
+    categories = conn.get_category_call
+    assert_equal 3, categories.size
+
+    categories.each_with_index do |category, i|
+      category_id = (i + 1).to_s
+      assert_equal category_id, category.id
+      assert_equal "Category #{category_id}", category.name
+    end
   end
   
 private

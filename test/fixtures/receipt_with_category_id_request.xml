@@ -10,7 +10,8 @@
       <PageNo>1</PageNo>
       <DateStart>2008-01-01T00:00:00</DateStart>
       <DateEnd>2009-01-01T00:00:00</DateEnd>
-      <UseSellDate>false</UseSellDate>
+      <UseSellDate>true</UseSellDate>
+      <Category>10</Category>
     </ReceiptFilter>
   </GetReceiptCall>
 </Request>

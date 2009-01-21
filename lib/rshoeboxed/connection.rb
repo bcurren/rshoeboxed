@@ -64,12 +64,18 @@ module RShoeboxed
     end
 
     # Note: the result_count can only be 50, 100, or 200
-    def get_receipt_call(start_date, end_date, per_page = 50, current_page = 1)
-      request = build_receipt_request(per_page, current_page, start_date, end_date)
+    def get_receipt_call(start_date, end_date, options = {})
+      options = {
+        :use_sell_date => false,
+        :per_page => 50,
+        :current_page => 1
+      }.merge(options)
+      
+      request = build_receipt_request(start_date, end_date, options)
       response = post_xml(request)
 
       receipts = Receipt.parse(response)
-      wrap_array_with_pagination(receipts, response, current_page, per_page)
+      wrap_array_with_pagination(receipts, response, options[:current_page], options[:per_page])
     end
     
     def get_category_call
@@ -152,17 +158,19 @@ module RShoeboxed
       body
     end
 
-    def build_receipt_request(result_count, page_no, date_start, date_end)
+    def build_receipt_request(start_date, end_date, options)
       xml = Builder::XmlMarkup.new
       xml.instruct!
       xml.Request(:xmlns => "urn:sbx:apis:SbxBaseComponents") do |xml|
         append_credentials(xml)
         xml.GetReceiptCall do |xml|
           xml.ReceiptFilter do |xml|
-            xml.Results(result_count)
-            xml.PageNo(page_no)
-            xml.DateStart(date_to_s(date_start))
-            xml.DateEnd(date_to_s(date_end))
+            xml.Results(options[:per_page])
+            xml.PageNo(options[:current_page])
+            xml.DateStart(date_to_s(start_date))
+            xml.DateEnd(date_to_s(end_date))
+            xml.UseSellDate(options[:use_sell_date])
+            xml.Category(options[:category_id]) if options[:category_id]
           end
         end
       end
