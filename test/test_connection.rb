@@ -47,14 +47,7 @@ class TestConnection < Test::Unit::TestCase
   def test_build_receipt_info_call_request
     assert_equal fixture_xml_content("receipt_info_request"), @conn.send(:build_receipt_info_request, "1")
   end
-  
-  # def test_post_xml
-  #   xml = "<test></test>"
-  #   assert_nothing_raised do
-  #     @conn.send(:post_xml, xml)
-  #   end
-  # end
-  
+    
   def test_get_receipt_call__success_getting_two_receipt
     request = fixture_xml_content("receipt_request")
     response = fixture_xml_content("receipt_response")
@@ -112,6 +105,28 @@ class TestConnection < Test::Unit::TestCase
     assert_equal "2010-02-13T05:10:23", @conn.send(:date_to_s, DateTime.new(2010, 2, 13, 5, 10, 23))
     assert_equal "2008-03-14T12:13:14", @conn.send(:date_to_s, Time.utc(2008, 3, 14, 12, 13, 14))
     assert_equal "2008-03-14T12:13:14", @conn.send(:date_to_s, "2008-03-14T12:13:14")
+  end
+  
+  def test_build_category_request
+    assert_equal fixture_xml_content("category_request"), @conn.send(:build_category_request)
+  end
+  
+  
+  def test_get_category_call
+      request = fixture_xml_content("category_request")
+      response = fixture_xml_content("category_response")
+  
+      conn = Connection.new("api_key", "user_token")
+      conn.expects(:post_xml).with(request).returns(response)
+  
+      categories = conn.get_category_call
+      assert_equal 3, categories.size
+  
+      categories.each_with_index do |category, i|
+        category_id = (i + 1).to_s
+        assert_equal category_id, category.id
+        assert_equal "Category #{category_id}", category.name
+      end
   end
   
 private

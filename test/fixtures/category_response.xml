@@ -1,0 +1,7 @@
+<GetCategoryCallResponse>
+  <Categories>
+    <Category id="1" name="Category 1"/>
+    <Category id="2" name="Category 2"/>
+    <Category id="3" name="Category 3"/>
+  </Categories>
+</GetCategoryCallResponse>

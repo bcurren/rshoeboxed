@@ -65,13 +65,18 @@ module RShoeboxed
 
     # Note: the result_count can only be 50, 100, or 200
     def get_receipt_call(start_date, end_date, per_page = 50, current_page = 1)
-      receipt = Receipt.new
-
       request = build_receipt_request(per_page, current_page, start_date, end_date)
       response = post_xml(request)
 
       receipts = Receipt.parse(response)
       wrap_array_with_pagination(receipts, response, current_page, per_page)
+    end
+    
+    def get_category_call
+      request = build_category_request
+      response = post_xml(request)
+
+      Category.parse(response)
     end
 
   private
@@ -163,6 +168,18 @@ module RShoeboxed
             xml.DateEnd(date_to_s(date_end))
           end
         end
+      end
+    end
+    
+    def build_category_request
+      xml = Builder::XmlMarkup.new
+      xml.instruct!
+      xml.Request(:xmlns => "urn:sbx:apis:SbxBaseComponents") do |xml|
+        xml.RequesterCredentials do |xml|
+          xml.ApiUserToken(@api_key)
+          xml.SbxUserToken(@user_token)
+        end
+        xml.GetCategoryCall
       end
     end
 
