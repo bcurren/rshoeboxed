@@ -4,7 +4,7 @@ require 'rexml/document'
 
 module RShoeboxed
   class Receipt
-    attr_accessor :id, :store, :image_url
+    attr_accessor :id, :store, :image_url, :category_id
     attr_reader :date, :total
     
     def self.parse(xml)
@@ -17,6 +17,7 @@ module RShoeboxed
         receipt.date = receipt_element.attributes["date"]
         receipt.total = receipt_element.attributes["total"]
         receipt.image_url = receipt_element.attributes["imgurl"]
+        receipt.category_id = receipt_element.attributes["category"]
         
         receipt
       end

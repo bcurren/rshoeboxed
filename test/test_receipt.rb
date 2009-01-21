@@ -17,6 +17,7 @@ class TestReceipt < Test::Unit::TestCase
     assert_equal Date.new(2008, 5, 12), receipt.date
     assert_equal BigDecimal.new("1929.00"), receipt.total
     assert_equal "http://www.shoeboxed.com/receipt.jpeg", receipt.image_url
+    assert_equal "1", receipt.category_id
   end
   
   def test_receipt__accessors
@@ -37,5 +38,8 @@ class TestReceipt < Test::Unit::TestCase
     
     receipt.image_url = "http://www.example.com/one.image"
     assert_equal "http://www.example.com/one.image", receipt.image_url
+    
+    receipt.category_id = "2"
+    assert_equal "2", receipt.category_id
   end
 end

@@ -42,6 +42,7 @@ class TestConnection < Test::Unit::TestCase
     assert_equal Date.new(2008, 5, 12), receipt.date
     assert_equal BigDecimal.new("1929.00"), receipt.total
     assert_equal "http://www.shoeboxed.com/receipt.jpeg", receipt.image_url
+    assert_equal "1", receipt.category_id
   end
   
   def test_build_receipt_info_call_request
@@ -68,6 +69,7 @@ class TestConnection < Test::Unit::TestCase
     assert_equal Date.new(2008, 5, 12), receipt.date
     assert_equal BigDecimal.new("3378.30"), receipt.total
     assert_equal "http://www.shoeboxed.com/receipt1.jpeg", receipt.image_url
+    assert_equal "1", receipt.category_id
     
     receipt = receipts[1]
     assert_equal "39239293", receipt.id
@@ -75,6 +77,7 @@ class TestConnection < Test::Unit::TestCase
     assert_equal Date.new(2008, 5, 12), receipt.date
     assert_equal BigDecimal.new("3.51"), receipt.total
     assert_equal "http://www.shoeboxed.com/receipt2.jpeg", receipt.image_url
+    assert_equal "2", receipt.category_id
   end
   
   def test_build_receipt_request
