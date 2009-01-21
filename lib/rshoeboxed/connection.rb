@@ -156,10 +156,7 @@ module RShoeboxed
       xml = Builder::XmlMarkup.new
       xml.instruct!
       xml.Request(:xmlns => "urn:sbx:apis:SbxBaseComponents") do |xml|
-        xml.RequesterCredentials do |xml|
-          xml.ApiUserToken(@api_key)
-          xml.SbxUserToken(@user_token)
-        end
+        append_credentials(xml)
         xml.GetReceiptCall do |xml|
           xml.ReceiptFilter do |xml|
             xml.Results(result_count)
@@ -175,10 +172,7 @@ module RShoeboxed
       xml = Builder::XmlMarkup.new
       xml.instruct!
       xml.Request(:xmlns => "urn:sbx:apis:SbxBaseComponents") do |xml|
-        xml.RequesterCredentials do |xml|
-          xml.ApiUserToken(@api_key)
-          xml.SbxUserToken(@user_token)
-        end
+        append_credentials(xml)
         xml.GetCategoryCall
       end
     end
@@ -187,15 +181,19 @@ module RShoeboxed
       xml = Builder::XmlMarkup.new
       xml.instruct!
       xml.Request(:xmlns => "urn:sbx:apis:SbxBaseComponents") do |xml|
-        xml.RequesterCredentials do |xml|
-          xml.ApiUserToken(@api_key)
-          xml.SbxUserToken(@user_token)
-        end
+        append_credentials(xml)
         xml.GetReceiptInfoCall do |xml|
           xml.ReceiptFilter do |xml|
             xml.ReceiptId(id)
           end
         end
+      end
+    end
+    
+    def append_credentials(xml)
+      xml.RequesterCredentials do |xml|
+        xml.ApiUserToken(@api_key)
+        xml.SbxUserToken(@user_token)
       end
     end
   end
