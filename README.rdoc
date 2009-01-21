@@ -1,26 +1,44 @@
 = rshoeboxed
 
-* FIX (url)
+* http://github.com/bcurren/rshoeboxed
 
 == DESCRIPTION:
 
-FIX (describe your package)
-
-== FEATURES/PROBLEMS:
-
-* FIX (list of features or problems)
+Ruby wrapper for the Shoeboxed API.
 
 == SYNOPSIS:
 
-  FIX (code sample of usage)
+=== Generate authentication url
 
-== REQUIREMENTS:
+Use the following code to generate a url to send a user to to authenticate. The first parameter is the
+AppName provided by shoeboxed. Shoeboxed will redirect back to the return url once a user successfully
+authenticates. When the user is redirected back to the return_url, a token will be provided in the url
+for you to store for future API calls.
 
-* FIX (list of requirements)
+RShoeboxed::Connection.authentication_url("Outright", "http://example.com")
+
+=== Get a list of all receipts
+
+The api_token is provided by shoeboxed when you setup your API account. The user_token is retrieved by
+sending a user to authentication_url so they can log in to shoeboxed. On success, they will be redirected
+to the return_url with the user_token.
+
+connection = RShoeboxed::Connection.new("api_token", "user_token")
+receipts = connection.get_receipt_call(Date.new(2008, 1, 1), Date.new(2008, 12, 29))
+
+=== Get a particular receipt
+
+connection = RShoeboxed::Connection.new("api_token", "user_token")
+receipt = connection.get_category_info_call("2342442424")
+
+=== Get a list of all categories
+
+connection = RShoeboxed::Connection.new("api_token", "user_token")
+categories = connection.get_category_call
 
 == INSTALL:
 
-* FIX (sudo gem install, anything else)
+* sudo gem install bcurren_rshoeboxed
 
 == LICENSE:
 
