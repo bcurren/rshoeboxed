@@ -8,5 +8,5 @@ require 'rshoeboxed/connection'
 require 'rshoeboxed/list_proxy'
 
 module RShoeboxed
-  VERSION = '0.0.1'
+  VERSION = '0.0.2'
 end
