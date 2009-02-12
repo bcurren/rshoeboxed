@@ -4,6 +4,9 @@ class TestReceipt < Test::Unit::TestCase
   include RShoeboxed
 
   def setup
+    @category1 = Category.new
+    @category1.id = "1"
+    @category1.name = "Category 1"
   end
   
   def test_initialize_parse_xml
@@ -17,7 +20,7 @@ class TestReceipt < Test::Unit::TestCase
     assert_equal Date.new(2008, 5, 12), receipt.date
     assert_equal BigDecimal.new("1929.00"), receipt.total
     assert_equal "http://www.shoeboxed.com/receipt.jpeg", receipt.image_url
-    assert_equal "1", receipt.category_id
+    assert_equal [@category1], receipt.categories
   end
   
   def test_receipt__accessors
@@ -39,7 +42,7 @@ class TestReceipt < Test::Unit::TestCase
     receipt.image_url = "http://www.example.com/one.image"
     assert_equal "http://www.example.com/one.image", receipt.image_url
     
-    receipt.category_id = "2"
-    assert_equal "2", receipt.category_id
+    receipt.categories = [@category1]
+    assert_equal [@category1], receipt.categories
   end
 end

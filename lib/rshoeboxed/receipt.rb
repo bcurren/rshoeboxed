@@ -4,7 +4,7 @@ require 'rexml/document'
 
 module RShoeboxed
   class Receipt
-    attr_accessor :id, :store, :image_url, :category_id
+    attr_accessor :id, :store, :image_url, :categories
     attr_reader :date, :total
     
     def self.parse(xml)
@@ -17,13 +17,13 @@ module RShoeboxed
         receipt.date = receipt_element.attributes["date"]
         receipt.total = receipt_element.attributes["total"]
         receipt.image_url = receipt_element.attributes["imgurl"]
-        receipt.category_id = receipt_element.attributes["category"]
+        
+        # Get the categories elements and have Category parse them
+        category_element = receipt_element.elements["Categories"]
+        receipt.categories = category_element ? Category.parse(category_element.to_s) : []
         
         receipt
       end
-    end
-    
-    def initialize
     end
     
     def total=(total)
@@ -36,6 +36,11 @@ module RShoeboxed
     def date=(date)
       date = Date.parse(date) if date.is_a?(String)
       @date = date
+    end
+    
+    def ==(receipt)
+      self.id == receipt.id && self.store == receipt.store && self.image_url == receipt.image_url &&
+        self.categories == receipt.categories && self.date == receipt.date && self.total == receipt.total
     end
   end
 end

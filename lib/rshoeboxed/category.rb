@@ -13,6 +13,10 @@ module RShoeboxed
         category
       end
     end
+    
+    def ==(category)
+      self.id == category.id && self.name == category.name
+    end
 
   end
 end

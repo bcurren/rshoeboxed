@@ -1,1 +1,5 @@
-<Receipt store="Morgan Imports" id="1" total="$1,929.00" date="5/12/2008" imgurl="http://www.shoeboxed.com/receipt.jpeg" category="1" />
+<Receipt store="Morgan Imports" id="1" total="$1,929.00" date="5/12/2008" imgurl="http://www.shoeboxed.com/receipt.jpeg">
+  <Categories>
+    <Category name="Category 1" id="1"/>
+  </Categories> 
+</Receipt>

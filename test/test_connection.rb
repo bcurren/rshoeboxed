@@ -5,6 +5,14 @@ class TestConnection < Test::Unit::TestCase
   
   def setup
     @conn = Connection.new("api_key", "user_token")
+    
+    @category1 = Category.new
+    @category1.id = "1"
+    @category1.name = "Category 1"
+    
+    @category2 = Category.new
+    @category2.id = "2"
+    @category2.name = "Category 2"
   end
   
   def test_authenticate__connection_failures
@@ -42,7 +50,7 @@ class TestConnection < Test::Unit::TestCase
     assert_equal Date.new(2008, 5, 12), receipt.date
     assert_equal BigDecimal.new("1929.00"), receipt.total
     assert_equal "http://www.shoeboxed.com/receipt.jpeg", receipt.image_url
-    assert_equal "1", receipt.category_id
+    assert_equal [@category1], receipt.categories
   end
   
   def test_build_receipt_info_call_request
@@ -69,7 +77,7 @@ class TestConnection < Test::Unit::TestCase
     assert_equal Date.new(2008, 5, 12), receipt.date
     assert_equal BigDecimal.new("3378.30"), receipt.total
     assert_equal "http://www.shoeboxed.com/receipt1.jpeg", receipt.image_url
-    assert_equal "1", receipt.category_id
+    assert_equal [@category1], receipt.categories
     
     receipt = receipts[1]
     assert_equal "39239293", receipt.id
@@ -77,7 +85,7 @@ class TestConnection < Test::Unit::TestCase
     assert_equal Date.new(2008, 5, 12), receipt.date
     assert_equal BigDecimal.new("3.51"), receipt.total
     assert_equal "http://www.shoeboxed.com/receipt2.jpeg", receipt.image_url
-    assert_equal "2", receipt.category_id
+    assert_equal [@category2], receipt.categories
   end
   
   def test_build_receipt_request
