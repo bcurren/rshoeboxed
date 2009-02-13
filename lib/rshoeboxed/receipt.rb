@@ -11,17 +11,19 @@ module RShoeboxed
       document = REXML::Document.new(xml)
       document.elements.collect("//Receipt") do |receipt_element|
         receipt = Receipt.new
-        
-        receipt.id = receipt_element.attributes["id"]
-        receipt.store = receipt_element.attributes["store"]
-        receipt.date = receipt_element.attributes["date"]
-        receipt.total = receipt_element.attributes["total"]
-        receipt.image_url = receipt_element.attributes["imgurl"]
-        
-        # Get the categories elements and have Category parse them
-        category_element = receipt_element.elements["Categories"]
-        receipt.categories = category_element ? Category.parse(category_element.to_s) : []
-        
+        begin
+          receipt.id = receipt_element.attributes["id"]
+          receipt.store = receipt_element.attributes["store"]
+          receipt.date = receipt_element.attributes["date"]
+          receipt.total = receipt_element.attributes["total"]
+          receipt.image_url = receipt_element.attributes["imgurl"]
+          
+          # Get the categories elements and have Category parse them
+          category_element = receipt_element.elements["Categories"]
+          receipt.categories = category_element ? Category.parse(category_element.to_s) : []
+        rescue => e
+          raise RShoeboxed::ParseError.new(e, receipt_element.to_s, "Error parsing receipt.")
+        end
         receipt
       end
     end

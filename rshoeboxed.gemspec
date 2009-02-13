@@ -2,15 +2,15 @@
 
 Gem::Specification.new do |s|
   s.name = %q{rshoeboxed}
-  s.version = "0.0.2"
+  s.version = "0.0.3"
 
   s.required_rubygems_version = Gem::Requirement.new(">= 0") if s.respond_to? :required_rubygems_version=
   s.authors = ["Ben Curren"]
-  s.date = %q{2009-02-12}
+  s.date = %q{2009-02-13}
   s.description = %q{Ruby wrapper for the Shoeboxed API.}
   s.email = ["ben@gobootstrap.com"]
   s.extra_rdoc_files = ["History.txt", "Manifest.txt", "README.rdoc"]
-  s.files = ["History.txt", "Manifest.txt", "README.rdoc", "Rakefile", "lib/rshoeboxed.rb", "lib/rshoeboxed/category.rb", "lib/rshoeboxed/connection.rb", "lib/rshoeboxed/list_proxy.rb", "lib/rshoeboxed/receipt.rb", "script/console", "script/destroy", "script/generate", "test/fixtures/category_request.xml", "test/fixtures/category_response.xml", "test/fixtures/receipt_info_request.xml", "test/fixtures/receipt_info_response.xml", "test/fixtures/receipt_request.xml", "test/fixtures/receipt_response.xml", "test/fixtures/receipt_response_bad_credentials.xml", "test/fixtures/receipt_response_internal_error.xml", "test/fixtures/receipt_response_restricted_ip.xml", "test/fixtures/receipt_response_unknown_api_call.xml", "test/fixtures/receipt_response_xml_validation.xml", "test/fixtures/receipt_with_category_id_request.xml", "test/test_category.rb", "test/test_connection.rb", "test/test_helper.rb", "test/test_list_proxy.rb", "test/test_receipt.rb"]
+  s.files = ["History.txt", "Manifest.txt", "README.rdoc", "Rakefile", "lib/rshoeboxed.rb", "lib/rshoeboxed/category.rb", "lib/rshoeboxed/connection.rb", "lib/rshoeboxed/list_proxy.rb", "lib/rshoeboxed/parse_error.rb", "lib/rshoeboxed/receipt.rb", "script/console", "script/destroy", "script/generate", "test/fixtures/category_request.xml", "test/fixtures/category_response.xml", "test/fixtures/receipt_info_request.xml", "test/fixtures/receipt_info_response.xml", "test/fixtures/receipt_request.xml", "test/fixtures/receipt_response.xml", "test/fixtures/receipt_response_bad_credentials.xml", "test/fixtures/receipt_response_internal_error.xml", "test/fixtures/receipt_response_restricted_ip.xml", "test/fixtures/receipt_response_unknown_api_call.xml", "test/fixtures/receipt_response_xml_validation.xml", "test/fixtures/receipt_with_category_id_request.xml", "test/test_category.rb", "test/test_connection.rb", "test/test_helper.rb", "test/test_list_proxy.rb", "test/test_receipt.rb"]
   s.has_rdoc = true
   s.homepage = %q{http://github.com/bcurren/rshoeboxed}
   s.rdoc_options = ["--main", "README.rdoc"]

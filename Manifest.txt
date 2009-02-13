@@ -6,6 +6,7 @@ lib/rshoeboxed.rb
 lib/rshoeboxed/category.rb
 lib/rshoeboxed/connection.rb
 lib/rshoeboxed/list_proxy.rb
+lib/rshoeboxed/parse_error.rb
 lib/rshoeboxed/receipt.rb
 script/console
 script/destroy
