@@ -5,7 +5,7 @@ require 'rexml/document'
 module RShoeboxed
   class Receipt
     attr_accessor :id, :store, :image_url, :categories
-    attr_reader :date, :total
+    attr_reader :sell_date, :created_date, :modified_date, :total
     
     def self.parse(xml)
       document = REXML::Document.new(xml)
@@ -14,7 +14,9 @@ module RShoeboxed
         begin
           receipt.id = receipt_element.attributes["id"]
           receipt.store = receipt_element.attributes["store"]
-          receipt.date = receipt_element.attributes["date"]
+          receipt.sell_date = receipt_element.attributes["selldate"]
+          receipt.created_date = receipt_element.attributes["createdDate"]
+          receipt.modified_date = receipt_element.attributes["modifiedDate"]
           receipt.total = receipt_element.attributes["total"]
           receipt.image_url = receipt_element.attributes["imgurl"]
           
@@ -35,14 +37,26 @@ module RShoeboxed
       @total = total
     end
     
-    def date=(date)
+    def sell_date=(date)
       date = Date.parse(date) if date.is_a?(String)
-      @date = date
+      @sell_date = date
+    end
+    
+    def created_date=(date)
+      date = Date.parse(date) if date.is_a?(String)
+      @created_date = date
+    end
+    
+    def modified_date=(date)
+      date = Date.parse(date) if date.is_a?(String)
+      @modified_date = date
     end
     
     def ==(receipt)
       self.id == receipt.id && self.store == receipt.store && self.image_url == receipt.image_url &&
-        self.categories == receipt.categories && self.date == receipt.date && self.total == receipt.total
+        self.categories == receipt.categories && self.sell_date == receipt.sell_date && 
+        self.modified_date == receipt.modified_date && self.created_date == receipt.created_date &&
+        self.total == receipt.total
     end
   end
 end

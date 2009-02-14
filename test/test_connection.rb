@@ -47,7 +47,9 @@ class TestConnection < Test::Unit::TestCase
     assert_not_nil receipt
     assert_equal "1", receipt.id
     assert_equal "Morgan Imports", receipt.store
-    assert_equal Date.new(2008, 5, 12), receipt.date
+    assert_equal Date.new(2008, 5, 12), receipt.sell_date
+    assert_equal Date.new(2008, 4, 12), receipt.created_date
+    assert_equal Date.new(2008, 4, 20), receipt.modified_date
     assert_equal BigDecimal.new("1929.00"), receipt.total
     assert_equal "http://www.shoeboxed.com/receipt.jpeg", receipt.image_url
     assert_equal [@category1], receipt.categories
@@ -74,7 +76,9 @@ class TestConnection < Test::Unit::TestCase
     receipt = receipts[0]
     assert_equal "23984923842", receipt.id
     assert_equal "Great Plains Trust Company", receipt.store
-    assert_equal Date.new(2008, 5, 12), receipt.date
+    assert_equal Date.new(2008, 5, 12), receipt.sell_date
+    assert_equal Date.new(2008, 4, 12), receipt.created_date
+    assert_equal Date.new(2008, 4, 20), receipt.modified_date
     assert_equal BigDecimal.new("3378.30"), receipt.total
     assert_equal "http://www.shoeboxed.com/receipt1.jpeg", receipt.image_url
     assert_equal [@category1], receipt.categories
@@ -82,7 +86,9 @@ class TestConnection < Test::Unit::TestCase
     receipt = receipts[1]
     assert_equal "39239293", receipt.id
     assert_equal "RadioShack", receipt.store
-    assert_equal Date.new(2008, 5, 12), receipt.date
+    assert_equal Date.new(2008, 5, 12), receipt.sell_date
+    assert_equal Date.new(2008, 4, 12), receipt.created_date
+    assert_equal Date.new(2008, 4, 20), receipt.modified_date
     assert_equal BigDecimal.new("3.51"), receipt.total
     assert_equal "http://www.shoeboxed.com/receipt2.jpeg", receipt.image_url
     assert_equal [@category2], receipt.categories

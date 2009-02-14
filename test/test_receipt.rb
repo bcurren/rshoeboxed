@@ -17,7 +17,9 @@ class TestReceipt < Test::Unit::TestCase
     receipt = receipts.first
     assert_equal "1", receipt.id
     assert_equal "Morgan Imports", receipt.store
-    assert_equal Date.new(2008, 5, 12), receipt.date
+    assert_equal Date.new(2008, 5, 12), receipt.sell_date
+    assert_equal Date.new(2008, 4, 12), receipt.created_date
+    assert_equal Date.new(2008, 4, 20), receipt.modified_date
     assert_equal BigDecimal.new("1929.00"), receipt.total
     assert_equal "http://www.shoeboxed.com/receipt.jpeg", receipt.image_url
     assert_equal [@category1], receipt.categories
@@ -36,13 +38,21 @@ class TestReceipt < Test::Unit::TestCase
     receipt.total = '$1,000.19'
     assert_equal BigDecimal.new('1000.19'), receipt.total
     
-    receipt.date = '1/1/2001'
-    assert_equal Date.parse('1/1/2001'), receipt.date
+    receipt.created_date = '1/2/2001'
+    assert_equal Date.parse('1/2/2001'), receipt.created_date
+    
+    receipt.modified_date = '1/3/2001'
+    assert_equal Date.parse('1/3/2001'), receipt.modified_date
     
     receipt.image_url = "http://www.example.com/one.image"
     assert_equal "http://www.example.com/one.image", receipt.image_url
     
     receipt.categories = [@category1]
     assert_equal [@category1], receipt.categories
+  end
+  
+  def test_equal
+    # lame test but at least execute the code
+    assert_equal Receipt.new, Receipt.new
   end
 end

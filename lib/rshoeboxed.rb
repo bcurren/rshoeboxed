@@ -9,5 +9,5 @@ require 'rshoeboxed/list_proxy'
 require 'rshoeboxed/parse_error'
 
 module RShoeboxed
-  VERSION = '0.0.3'
+  VERSION = '0.0.4'
 end
