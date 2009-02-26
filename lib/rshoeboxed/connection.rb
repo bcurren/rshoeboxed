@@ -15,21 +15,21 @@ module RShoeboxed
   
   class Connection
     attr_accessor :api_key, :user_token
-
+    
     API_SERVER = "www.shoeboxed.com"
     API_PATH = "/ws/api.htm"
     API_URL = "https://" + API_SERVER + API_PATH
-
+    
     @@logger = Logger.new(STDOUT)
     def logger
       @@logger
     end
-
+    
     def self.log_level=(level)
       @@logger.level = level
     end
     self.log_level = Logger::WARN
-
+    
     # Generates a url for you to obtain the user token. This url with take the user to the Shoeboxed authentication
     # page. After the user successfully authenticates, they will be redirected to the app_url with the token and uname
     # as parameters.
@@ -45,8 +45,8 @@ module RShoeboxed
       [:SignIn, 1]]
       )
     end
-
-
+    
+    
     # The initialization method takes in two params:
     # api_key - 
     # user_token (generated after validating from the authentication url)
@@ -54,15 +54,15 @@ module RShoeboxed
       @api_key = api_key
       @user_token = user_token
     end
-
+    
     def get_receipt_info_call(id)
       request = build_receipt_info_request(id)
       response = post_xml(request)
-
+      
       receipts = Receipt.parse(response)
       receipts ? receipts.first : nil
     end
-
+    
     # Note: the result_count can only be 50, 100, or 200
     def get_receipt_call(start_date, end_date, options = {})
       options = {
@@ -73,7 +73,7 @@ module RShoeboxed
       
       request = build_receipt_request(start_date, end_date, options)
       response = post_xml(request)
-
+      
       receipts = Receipt.parse(response)
       wrap_array_with_pagination(receipts, response, options[:current_page], options[:per_page])
     end
@@ -81,12 +81,12 @@ module RShoeboxed
     def get_category_call
       request = build_category_request
       response = post_xml(request)
-
+      
       Category.parse(response)
     end
-
+    
   private
-  
+    
     def wrap_array_with_pagination(receipts, response, current_page, per_page)
       document = REXML::Document.new(response)
       counts = document.elements.collect("//Receipts") { |element| element.attributes["count"] || 0 }
@@ -107,13 +107,13 @@ module RShoeboxed
       if params.kind_of? Hash
         params = params.to_a
       end
-
+      
       encoded_params = params.collect do |name, value|
         "#{CGI.escape(name.to_s)}=#{CGI.escape(value.to_s)}"
       end
       encoded_params.join("&")
     end
-
+    
     def post_xml(body)
       connection = Net::HTTP.new(API_SERVER, 443)
       connection.use_ssl = true
@@ -157,7 +157,7 @@ module RShoeboxed
       
       body
     end
-
+    
     def build_receipt_request(start_date, end_date, options)
       xml = Builder::XmlMarkup.new
       xml.instruct!
@@ -184,7 +184,7 @@ module RShoeboxed
         xml.GetCategoryCall
       end
     end
-
+    
     def build_receipt_info_request(id)
       xml = Builder::XmlMarkup.new
       xml.instruct!
