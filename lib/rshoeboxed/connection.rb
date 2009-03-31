@@ -4,6 +4,7 @@ require "cgi"
 require "net/https"
 require 'rexml/document'
 require 'logger'
+require 'iconv'
 
 module RShoeboxed
   class Error < StandardError; end;
@@ -114,24 +115,28 @@ module RShoeboxed
       encoded_params.join("&")
     end
     
+
     def post_xml(body)
       connection = Net::HTTP.new(API_SERVER, 443)
       connection.use_ssl = true
       connection.verify_mode = OpenSSL::SSL::VERIFY_NONE
-      
+
       request = Net::HTTP::Post.new(API_PATH)
       request.set_form_data({'xml'=>body})
-      
+
       result = connection.start  { |http| http.request(request) }
-      
+
+      # Convert to UTF-8, shoeboxed encodes with ISO-8859-1
+      result_body = Iconv.conv('UTF-8', 'ISO-8859-1', result.body)
+
       if logger.debug?
         logger.debug "Request:"
         logger.debug body
         logger.debug "Response:"
-        logger.debug result.body
+        logger.debug result_body
       end
-      
-      check_for_api_error(result.body)
+
+      check_for_api_error(result_body)
     end
     
     def check_for_api_error(body)
