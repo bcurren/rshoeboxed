@@ -5,6 +5,7 @@ require "net/https"
 require 'rexml/document'
 require 'logger'
 require 'iconv'
+require 'active_support'
 
 module RShoeboxed
   class Error < StandardError; end;
@@ -17,7 +18,7 @@ module RShoeboxed
   class Connection
     attr_accessor :api_key, :user_token
     
-    API_SERVER = "www.shoeboxed.com"
+    API_SERVER = "app.shoeboxed.com"
     API_PATH = "/ws/api.htm"
     API_URL = "https://" + API_SERVER + API_PATH
     
@@ -66,6 +67,15 @@ module RShoeboxed
     
     # Note: the result_count can only be 50, 100, or 200
     def get_receipt_call(start_date, end_date, options = {})
+      if end_date.to_datetime.utc?
+        end_date = ( end_date ).to_datetime
+      else        
+        end_date = ( end_date ).to_datetime.in_time_zone 'UTC'  # missing txns
+      end
+      
+      start_date = (start_date.to_datetime.beginning_of_day).strftime("%FT%T")
+      end_date = (end_date).strftime("%FT%T")
+      
       options = {
         :use_sell_date => false,
         :per_page => 50,
@@ -74,6 +84,7 @@ module RShoeboxed
       
       request = build_receipt_request(start_date, end_date, options)
       response = post_xml(request)
+      
       
       receipts = Receipt.parse(response)
       wrap_array_with_pagination(receipts, response, options[:current_page], options[:per_page])

@@ -1,4 +1,5 @@
 %w[rubygems rake rake/clean fileutils newgem rubigen].each { |f| require f }
+require 'hoe'
 require File.dirname(__FILE__) + '/lib/rshoeboxed'
 
 # Generate all the Rake tasks

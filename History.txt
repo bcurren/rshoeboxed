@@ -1,3 +1,7 @@
+== 0.0.7 2009-02-15
+
+* Adjusted EndDate to use GMT, which isn't the same as Shoeboxed's docs... but which a) works and b) is more permissive in terms of getting a fuller list of txns.  If Shoeboxed adjusts their code to match the docs, we can go back to EST.
+
 == 0.0.1 2009-01-12
 
 * 1 major enhancement:

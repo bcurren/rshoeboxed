@@ -20,13 +20,13 @@ class TestConnection < Test::Unit::TestCase
   end
   
   def test_authentication_url__success_with_options
-    assert_equal "https://www.shoeboxed.com/ws/api.htm?appname=Bootstrap&appurl=http%3A%2F%2Fexample.com&apparams=test%3D1%26test2%3D1&SignIn=1", 
+    assert_equal "https://app.shoeboxed.com/ws/api.htm?appname=Bootstrap&appurl=http%3A%2F%2Fexample.com&apparams=test%3D1%26test2%3D1&SignIn=1", 
       Connection.authentication_url("Bootstrap", "http://example.com", [[:test, 1], [:test2, 1]])
   end
   
   
   def test_authentication_url__success_no_options
-    assert_equal "https://www.shoeboxed.com/ws/api.htm?appname=Bootstrap&appurl=http%3A%2F%2Fexample.com&apparams=&SignIn=1", 
+    assert_equal "https://app.shoeboxed.com/ws/api.htm?appname=Bootstrap&appurl=http%3A%2F%2Fexample.com&apparams=&SignIn=1", 
       Connection.authentication_url("Bootstrap", "http://example.com")
   end
   
@@ -92,6 +92,17 @@ class TestConnection < Test::Unit::TestCase
     assert_equal BigDecimal.new("3.51"), receipt.total
     assert_equal "http://www.shoeboxed.com/receipt2.jpeg", receipt.image_url
     assert_equal [@category2], receipt.categories
+  end
+  
+  def test_get_receipt_call__uses_gmt
+    request = fixture_xml_content("receipt_request")
+    response = fixture_xml_content("receipt_response")
+    
+    conn = Connection.new("api_key", "user_token")
+    conn.expects(:build_receipt_request).with("2008-01-01T00:00:00", "2009-01-01T14:00:00", anything).returns(request)
+    conn.expects(:post_xml).with(request).returns(response)
+    
+    conn.get_receipt_call(DateTime.new(2008, 1, 1, 15, 30, 45), Time.utc(2009, 1, 1, 14, 0, 0).in_time_zone("America/Los_Angeles"))
   end
   
   def test_build_receipt_request
