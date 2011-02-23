@@ -4,9 +4,8 @@ require 'rexml/document'
 
 module RShoeboxed
   class Receipt
-    attr_accessor :id, :store, :image_url, :categories
-    attr_reader :sell_date, :created_date, :modified_date, :total
-    
+    attr_accessor :id, :store, :image_url, :categories, :account_currency
+    attr_reader :sell_date, :created_date, :modified_date, :converted_total
     def self.parse(xml)
       document = REXML::Document.new(xml)
       document.elements.collect("//Receipt") do |receipt_element|
@@ -17,9 +16,10 @@ module RShoeboxed
           receipt.sell_date = receipt_element.attributes["selldate"]
           receipt.created_date = receipt_element.attributes["createdDate"]
           receipt.modified_date = receipt_element.attributes["modifiedDate"]
-          receipt.total = receipt_element.attributes["total"]
+          receipt.converted_total = receipt_element.attributes["convertedTotal"]
+          receipt.account_currency = receipt_element.attributes["accountCurrency"]
           receipt.image_url = receipt_element.attributes["imgurl"]
-          
+
           # Get the categories elements and have Category parse them
           category_element = receipt_element.elements["Categories"]
           receipt.categories = category_element ? Category.parse(category_element.to_s) : []
@@ -29,12 +29,21 @@ module RShoeboxed
         receipt
       end
     end
+
+    def converted_total=(unprocessed_converted_total)
+      unprocessed_converted_total.gsub!(/[^\d|.]/, "") if unprocessed_converted_total.is_a?(String)
+      unprocessed_converted_total = BigDecimal.new(unprocessed_converted_total) unless unprocessed_converted_total.is_a?(BigDecimal)
+      @converted_total = unprocessed_converted_total
+    end
     
-    def total=(total)
-      total.gsub!(/[^\d|.]/, "") if total.is_a?(String)
-      total = BigDecimal.new(total) unless total.is_a?(BigDecimal)
-      
-      @total = total
+    def total
+      warn "DEPRECATION WARNING: `total` is deprecated. Please use `converted_total`"
+      converted_total
+    end
+    
+    def total=(unprocessed_converted_total)
+      warn "DEPRECATION WARNING: `total=` is deprecated. Please use `converted_total=`"
+      self.converted_total = unprocessed_converted_total
     end
     
     def sell_date=(date)
@@ -56,7 +65,7 @@ module RShoeboxed
       self.id == receipt.id && self.store == receipt.store && self.image_url == receipt.image_url &&
         self.categories == receipt.categories && self.sell_date == receipt.sell_date && 
         self.modified_date == receipt.modified_date && self.created_date == receipt.created_date &&
-        self.total == receipt.total
+        self.converted_total == receipt.converted_total && self.account_currency == receipt.account_currency
     end
   end
 end

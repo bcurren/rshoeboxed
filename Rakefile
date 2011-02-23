@@ -9,7 +9,7 @@ $hoe = Hoe.new('rshoeboxed', RShoeboxed::VERSION) do |p|
   p.changes              = p.paragraphs_of("History.txt", 0..1).join("\n\n")
   p.rubyforge_name       = p.name # TODO this is default value
   p.extra_deps         = [
-    ['builder','>= 2.1.2'],
+    ['builder','~> 2.1.2'],
   ]
   p.extra_dev_deps = [
     ['newgem', ">= #{::Newgem::VERSION}"],

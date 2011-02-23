@@ -5,8 +5,16 @@ class TestReceipt < Test::Unit::TestCase
 
   def setup
     @category1 = Category.new
-    @category1.id = "1"
-    @category1.name = "Category 1"
+    @category1.id = "23423342"
+    @category1.name = "Meals / Entertainment"
+    
+    @category2 = Category.new
+    @category2.id = "9121023"
+    @category2.name = "General Retail"
+
+    @category3 = Category.new
+    @category3.id = "18222392"
+    @category3.name = "Fuel"
   end
   
   def test_initialize_parse_xml
@@ -15,14 +23,15 @@ class TestReceipt < Test::Unit::TestCase
     assert_equal 1, receipts.size
     
     receipt = receipts.first
-    assert_equal "1", receipt.id
+    assert_equal "139595947", receipt.id
     assert_equal "Morgan Imports", receipt.store
     assert_equal Date.new(2008, 5, 12), receipt.sell_date
-    assert_equal Date.new(2008, 4, 12), receipt.created_date
-    assert_equal Date.new(2008, 4, 20), receipt.modified_date
-    assert_equal BigDecimal.new("1929.00"), receipt.total
-    assert_equal "http://www.shoeboxed.com/receipt.jpeg", receipt.image_url
-    assert_equal [@category1], receipt.categories
+    assert_equal Date.new(2008, 7, 10), receipt.created_date
+    assert_equal Date.new(2008, 7, 12), receipt.modified_date
+    assert_equal BigDecimal.new("1929.00"), receipt.converted_total
+    assert_equal "USD", receipt.account_currency
+    assert_equal "http://www.shoeboxed.com/receipt.jpeg?rid=139595947&code=1b106d61cbfa5078f53050e2f3bc315f", receipt.image_url
+    assert_equal [@category1, @category2, @category3], receipt.categories
   end
   
   def test_receipt__accessors
@@ -34,9 +43,12 @@ class TestReceipt < Test::Unit::TestCase
     
     receipt.id = "1"
     assert_equal "1", receipt.id
+   
+    receipt.converted_total = '$1,000.19'
+    assert_equal BigDecimal.new('1000.19'), receipt.converted_total
     
-    receipt.total = '$1,000.19'
-    assert_equal BigDecimal.new('1000.19'), receipt.total
+    receipt.account_currency = "USD"
+    assert_equal "USD", receipt.account_currency
     
     receipt.created_date = '1/2/2001'
     assert_equal Date.parse('1/2/2001'), receipt.created_date
@@ -50,7 +62,7 @@ class TestReceipt < Test::Unit::TestCase
     receipt.categories = [@category1]
     assert_equal [@category1], receipt.categories
   end
-  
+
   def test_equal
     # lame test but at least execute the code
     assert_equal Receipt.new, Receipt.new

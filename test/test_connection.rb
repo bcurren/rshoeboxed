@@ -7,12 +7,20 @@ class TestConnection < Test::Unit::TestCase
     @conn = Connection.new("api_key", "user_token")
     
     @category1 = Category.new
-    @category1.id = "1"
-    @category1.name = "Category 1"
+    @category1.id = "23423342"
+    @category1.name = "Meals / Entertainment"
     
     @category2 = Category.new
-    @category2.id = "2"
-    @category2.name = "Category 2"
+    @category2.id = "9121023"
+    @category2.name = "General Retail"
+
+    @category3 = Category.new
+    @category3.id = "18222392"
+    @category3.name = "Fuel"
+
+    @category4 = Category.new
+    @category4.id = "892732"
+    @category4.name = "Electronics"
   end
   
   def test_authenticate__connection_failures
@@ -45,14 +53,15 @@ class TestConnection < Test::Unit::TestCase
     
     receipt = conn.get_receipt_info_call('1')
     assert_not_nil receipt
-    assert_equal "1", receipt.id
+    assert_equal "139595947", receipt.id
     assert_equal "Morgan Imports", receipt.store
     assert_equal Date.new(2008, 5, 12), receipt.sell_date
-    assert_equal Date.new(2008, 4, 12), receipt.created_date
-    assert_equal Date.new(2008, 4, 20), receipt.modified_date
-    assert_equal BigDecimal.new("1929.00"), receipt.total
-    assert_equal "http://www.shoeboxed.com/receipt.jpeg", receipt.image_url
-    assert_equal [@category1], receipt.categories
+    assert_equal Date.new(2008, 7, 10), receipt.created_date
+    assert_equal Date.new(2008, 7, 12), receipt.modified_date
+    assert_equal BigDecimal.new("1929.00"), receipt.converted_total
+    assert_equal "USD", receipt.account_currency
+    assert_equal "http://www.shoeboxed.com/receipt.jpeg?rid=139595947&code=1b106d61cbfa5078f53050e2f3bc315f", receipt.image_url
+    assert_equal [@category1, @category2, @category3], receipt.categories
   end
   
   def test_build_receipt_info_call_request
@@ -77,21 +86,23 @@ class TestConnection < Test::Unit::TestCase
     assert_equal "23984923842", receipt.id
     assert_equal "Great Plains Trust Company", receipt.store
     assert_equal Date.new(2008, 5, 12), receipt.sell_date
-    assert_equal Date.new(2008, 4, 12), receipt.created_date
-    assert_equal Date.new(2008, 4, 20), receipt.modified_date
-    assert_equal BigDecimal.new("3378.30"), receipt.total
-    assert_equal "http://www.shoeboxed.com/receipt1.jpeg", receipt.image_url
-    assert_equal [@category1], receipt.categories
+    assert_equal Date.new(2008, 7, 10), receipt.created_date
+    assert_equal Date.new(2008, 7, 12), receipt.modified_date
+    assert_equal BigDecimal.new("3378.30"), receipt.converted_total
+    assert_equal "USD", receipt.account_currency
+    assert_equal "http://www.shoeboxed.com/receipt.jpeg?rid= 23984923842&code=1b106d61cbfa5078f53050e2f3bc315f", receipt.image_url
+    assert_equal [@category1, @category2, @category3], receipt.categories
     
     receipt = receipts[1]
     assert_equal "39239293", receipt.id
     assert_equal "RadioShack", receipt.store
     assert_equal Date.new(2008, 5, 12), receipt.sell_date
-    assert_equal Date.new(2008, 4, 12), receipt.created_date
-    assert_equal Date.new(2008, 4, 20), receipt.modified_date
-    assert_equal BigDecimal.new("3.51"), receipt.total
-    assert_equal "http://www.shoeboxed.com/receipt2.jpeg", receipt.image_url
-    assert_equal [@category2], receipt.categories
+    assert_equal Date.new(2008, 7, 10), receipt.created_date
+    assert_equal Date.new(2008, 7, 12), receipt.modified_date
+    assert_equal BigDecimal.new("3.51"), receipt.converted_total
+    assert_equal "USD", receipt.account_currency
+    assert_equal "http://www.shoeboxed.com/receipt.jpeg?rid= 39239293&code=1b106d61cbfa5078f53050e2f3bc315f", receipt.image_url
+    assert_equal [@category4], receipt.categories
   end
   
   def test_get_receipt_call__uses_gmt
