@@ -1,5 +1,9 @@
-<Receipt store="Morgan Imports" id="1" total="$1,929.00" selldate="5/12/2008" createdDate="4/12/2008" modifiedDate="4/20/2008" imgurl="http://www.shoeboxed.com/receipt.jpeg">
-  <Categories>
-    <Category name="Category 1" id="1"/>
-  </Categories> 
-</Receipt>
+<GetReceiptInfoCallResponse>
+  <Receipt store="Morgan Imports" id="139595947" total="$1,929.00" documentCurrency="USD" accountCurrency="USD" conversionRate="1" documentTotal="1929.00" convertedTotal="1929.00" formattedDocumentTotal="$1,929.00" formattedConvertedTotal="$1,929.00" documentTax="" convertedTax="" formattedDocumentTax="" formattedConvertedTax="" date="7/12/2008" modifiedDate="7/12/2008" createdDate="7/10/2008" selldate="5/12/2008" imgurl="http://www.shoeboxed.com/receipt.jpeg?rid=139595947&code=1b106d61cbfa5078f53050e2f3bc315f">
+    <Categories>
+      <Category name="Meals / Entertainment" id="23423342"/>
+      <Category name="General Retail" id="9121023"/>
+      <Category name="Fuel" id="18222392"/>
+    </Categories>
+  </Receipt>
+</GetReceiptInfoCallResponse>

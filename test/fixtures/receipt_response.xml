@@ -1,14 +1,17 @@
 <GetReceiptCallResponse>
   <Receipts count="2">
-    <Receipt store="Great Plains Trust Company" id="23984923842" total="$3,378.30" selldate="5/12/2008" createdDate="4/12/2008" modifiedDate="4/20/2008" imgurl="http://www.shoeboxed.com/receipt1.jpeg">
-      <Categories>
-        <Category name="Category 1" id="1"/>
-      </Categories>
-    </Receipt>
-    <Receipt store="RadioShack" id="39239293" total="$3.51" selldate="5/12/2008" createdDate="4/12/2008" modifiedDate="4/20/2008" imgurl="http://www.shoeboxed.com/receipt2.jpeg">
-      <Categories>
-        <Category name="Category 2" id="2"/>
-      </Categories>
-    </Receipt>
+      <Receipt store="Great Plains Trust Company" id="23984923842" total="$3,378.30" documentCurrency="USD" accountCurrency="USD" conversionRate="1" documentTotal="3378.30" convertedTotal="3378.30" formattedDocumentTotal="$3,378.30" formattedConvertedTotal="$3,378.30" documentTax="" convertedTax="" formattedDocumentTax="" formattedConvertedTax="" date="7/12/2008" modifiedDate="7/12/2008" createdDate="7/10/2008" selldate="5/12/2008" imgurl="http://www.shoeboxed.com/receipt.jpeg?rid= 23984923842&code=1b106d61cbfa5078f53050e2f3bc315f">
+          <Categories>
+            <Category name="Meals / Entertainment" id="23423342"/>
+            <Category name="General Retail" id="9121023"/>
+            <Category name="Fuel" id="18222392"/>
+          </Categories>
+      </Receipt>
+      <Receipt store="RadioShack" id="39239293" total="$3.51" documentCurrency="USD" accountCurrency="USD" conversionRate="1" documentTotal="3.51" convertedTotal="3.51" formattedDocumentTotal="$3.51" formattedConvertedTotal="$3.51" documentTax="" convertedTax="" formattedDocumentTax="" formattedConvertedTax="" date="7/12/2008" modifiedDate="7/12/2008" createdDate="7/10/2008" selldate="5/12/2008" imgurl="http://www.shoeboxed.com/receipt.jpeg?rid= 39239293&code=1b106d61cbfa5078f53050e2f3bc315f">
+        <Categories>
+            <Category name="Electronics" id="892732"/>
+        </Categories>
+      </Receipt>
   </Receipts>
 </GetReceiptCallResponse>
+

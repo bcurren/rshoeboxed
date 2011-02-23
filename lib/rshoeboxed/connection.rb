@@ -1,5 +1,3 @@
-gem "builder"
-require "builder"
 require "cgi"
 require "net/https"
 require 'rexml/document'
